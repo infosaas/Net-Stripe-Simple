@@ -1270,88 +1270,16 @@ B<Available Actions>
 
 =head2 transfers
 
-See L<https://stripe.com/docs/api#transfers>.
-
-B<Available Actions>
-
-=over 4
-
-=item create
-
-    my $transfer = $stripe->transfers(
-        create => {
-            amount    => 1,
-            currency  => 'usd',
-            recipient => $recipient,
-        }
-    );
-
-=item retrieve
-
-    $transfer = $stripe->transfers( retrieve => $id );
-
-=item update
-
-    $transfer = $stripe->transfers(
-        update => {
-            id       => $transfer,
-            metadata => { foo => 'bar' }
-        }
-    );
-
-=item cancel
-
-    $transfer = $stripe->transfers( cancel => $transfer );
-
-=item list
-
-    my $transfers = $stripe->transfers(
-        list => {
-            created => { gt => $time }
-        }
-    );
-
-=back
+Transfers in Stripe no longer have the meaning that this module originally
+implemented (see L<https://stripe.com/docs/transfer-payout-split>). As such,
+they have been removed from the module for the time being. They will be added
+in their new meaning with a suitable PR.
 
 =head2 recipients
 
-See L<https://stripe.com/docs/api#recipients>.
-
-B<Available Actions>
-
-=over 4
-
-=item create
-
-    $recipient = $stripe->recipients(
-        create => {
-            name => 'I Am An Example',
-            type => 'individual',
-        }
-    );
-
-=item retrieve
-
-    $recipient = $stripe->recipients( retrieve => $id );
-
-=item update
-
-    $recipient = $stripe->recipients(
-        update => {
-            id       => $recipient,
-            metadata => { foo => 'bar' },
-        }
-    );
-
-=item delete
-
-    $recipient = $stripe->recipients( delete => $id );
-
-=item list
-
-    my $recipients = $stripe->recipients('list');
-
-=back
+Recipients have been deprecated and are no longer available in the Stripe API,
+so have been removed from this module. They have been replaced by Custom
+accounts (see L<https://stripe.com/docs/connect/recipient-account-migrations>).
 
 =head2 application_fees
 
