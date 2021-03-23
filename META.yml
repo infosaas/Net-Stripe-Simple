@@ -1,6 +1,7 @@
 ---
 abstract: 'simple, non-Moose interface to the Stripe API'
 author:
+  - 'Andy Beverley <andy@andybev.com>'
   - 'Grant Street Group <developers@grantstreet.com>'
   - 'David F. Houghton <dfhoughton@gmail.com>'
 build_requires:
@@ -42,6 +43,6 @@ requires:
   strict: '0'
   warnings: '0'
 resources:
-  repository: git://github.com/GrantStreetGroup/net-stripe-simple.git
+  repository: git://github.com/infosaas/Net-Stripe-Simple.git
 version: '0.004'
 x_serialization_backend: 'YAML::Tiny version 1.69'
