@@ -751,10 +751,6 @@ __END__
 
 Net::Stripe::Simple - simple, non-Moose interface to the Stripe API
 
-=head1 VERSION
-
-version 0.004
-
 =head1 SYNOPSIS
 
   use Net::Stripe::Simple;
@@ -1570,6 +1566,10 @@ You can import the constants individually or all together with C<:const>.
 =head1 AUTHORS
 
 =over 4
+
+=item *
+
+Andy Beverley <andy@andybev.com>
 
 =item *
 
