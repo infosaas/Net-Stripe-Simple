@@ -206,6 +206,41 @@ sub _delete_customer   { goto &_del }
 sub _list_customer     { goto &_list }
 
 
+sub payment_intents {
+    my $self = shift;
+    state $actions =
+      { map { $_ => undef } qw(create retrieve update confirm capture cancel list) };
+    my ( $args, $method ) = $self->_validate( 'payment_intent', $actions, @_ );
+    $args->{_base} = 'payment_intents';
+    return $self->$method($args);
+}
+sub _create_payment_intent   { goto &_create }
+sub _retrieve_payment_intent { goto &_retrieve }
+sub _update_payment_intent   { goto &_update }
+sub _confirm_payment_intent {
+    my ( $self, $args ) = @_;
+    my ( $base, $id )   = @$args{qw(_base id)};
+    _invalid('No id provided.') unless defined $id;
+    my $path = $base . '/' . uri_escape($id) . '/confirm';
+    return $self->_post($path);
+}
+sub _capture_payment_intent {
+    my ( $self, $args ) = @_;
+    my ( $base, $id )   = @$args{qw(_base id)};
+    _invalid('No id provided.') unless defined $id;
+    my $path = $base . '/' . uri_escape($id) . '/capture';
+    return $self->_post($path);
+}
+sub _cancel_payment_intent {
+    my ( $self, $args ) = @_;
+    my ( $base, $id )   = @$args{qw(_base id)};
+    _invalid('No id provided.') unless defined $id;
+    my $path = $base . '/' . uri_escape($id) . '/cancel';
+    return $self->_post($path);
+}
+sub _list_payment_intent     { goto &_list }
+
+
 sub cards {
     my $self = shift;
     state $actions =
@@ -1265,6 +1300,68 @@ B<Available Actions>
 =item close
 
     $stripe->disputes( close => $charge );
+
+=back
+
+=head2 payment intents
+
+See L<https://stripe.com/docs/api/payment_intents>.
+
+B<Available Actions>
+
+=over 4
+
+=item update
+
+    $stripe->disputes(
+        update => {
+            id       => $charge,
+            metadata => { foo => 'bar' }
+        }
+    );
+
+=item create
+
+    $stripe->payment_intents(
+        create => {
+            amount         => 100,
+            currency       => 'usd',
+            customer       => $customer,
+            payment_method => $card,
+        }
+    );
+
+=item retrieve
+
+    $payment_intent = $stripe->payment_intents( retrieve => $id );
+
+=item list
+
+    $stripe->payment_intents(
+        list => {
+            customer => $customer
+        }
+    );
+
+=item confirm
+
+    $stripe->payment_intents(
+        confirm => {
+            id => $payment_intent,
+        }
+    );
+
+=item capture
+
+    $stripe->payment_intents(
+        capture => {
+            id => $payment_intent,
+        }
+    );
+
+=item cancel
+
+    $payment_intent = $stripe->payment_intents( cancel => $payment_intent );
 
 =back
 

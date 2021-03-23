@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use autodie;
 use Test::Exception;
-use Test::More tests => 18;
+use Test::More tests => 19;
 use Net::Stripe::Simple qw(:all);
 use DateTime;
 
@@ -637,6 +637,67 @@ subtest Tokens => sub {
       'retrieve requires id';
     $token = $stripe->tokens( retrieve => $id );
     is $token->id, $id, 'retrieved a token';
+};
+
+subtest PaymentIntents => sub {
+    plan tests => 9;
+    my $payment_intent = $stripe->payment_intents(
+        create => {
+            amount   => 100,
+            currency => 'usd',
+            customer => $customer,
+            capture_method => 'manual', # Allow testing of capture functionality
+            payment_method => $card,
+        }
+    );
+    ok $payment_intent, 'created a payment intent';
+    my $id = $payment_intent->id;
+    throws_ok { $stripe->payment_intents('retrieve') } qr/No .*\bid provided/,
+      'retrieve requires id';
+    $payment_intent = $stripe->payment_intents( retrieve => $id );
+    is $payment_intent->id, $id, 'retrieved a payment intent';
+    my $payment_intents = $stripe->payment_intents(
+        list => {
+            created => { gt => $time }
+        }
+    );
+    ok( ( grep { $_->id eq $id } @{ $payment_intents->data } ), 'listed payment intents' );
+    throws_ok {
+        $stripe->payment_intents(
+            update => {
+                metadata => { foo => 'bar' }
+            }
+          )
+    }
+    qr/No .*\bid provided/, 'update requires id';
+    $payment_intent = $stripe->payment_intents(
+        update => {
+            id       => $payment_intent,
+            metadata => { foo => 'bar' }
+        }
+    );
+    is $payment_intent->metadata->foo, 'bar', 'updated a payment intent';
+    # Confirm
+    $payment_intent = $stripe->payment_intents(
+        confirm => {
+            id       => $payment_intent,
+        }
+    );
+    is $payment_intent->status, 'requires_capture', 'confirmed a payment intent';
+    # Capture
+    $payment_intent = $stripe->payment_intents(
+        capture => {
+            id       => $payment_intent,
+        }
+    );
+    is $payment_intent->status, 'succeeded', 'captured a payment intent';
+
+    eval {
+        throws_ok { $stripe->payment_intents('cancel') } qr/No .*\bid provided/,
+          'cancel requires id';
+        $payment_intent = $stripe->payment_intents( cancel => $payment_intent );
+        ok $payment_intent->canceled_at, 'canceled a payment intent';
+    };
 };
 
 subtest 'Application Fees' => sub {
