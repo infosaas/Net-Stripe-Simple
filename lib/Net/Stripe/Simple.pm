@@ -18,6 +18,8 @@ use Devel::StackTrace;
 use Net::Stripe::Simple::Data;
 use Net::Stripe::Simple::Error;
 
+our $VERSION = '0.05';
+
 our @EXPORT_OK = qw(true false null data_object);
 our %EXPORT_TAGS = ( const => [qw(true false null)], all => \@EXPORT_OK );
 
