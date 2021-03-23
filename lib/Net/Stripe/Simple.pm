@@ -834,10 +834,6 @@ The three constants plus C<data_object>.
 
 =back
 
-=head1 NAME
-
-Net::Stripe::Simple - simple, non-Moose interface to the Stripe API
-
 =head1 METHODS
 
 =head2 new
