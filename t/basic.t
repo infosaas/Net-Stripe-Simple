@@ -651,7 +651,7 @@ subtest 'Application Fees' => sub {
         is $fee->id, $id, 'retrieved application fee';
     };
     if ( my $e = $@ ) {               # at least the path worked
-        is $e->message, "No such application fee: $id",
+        is $e->message, "No such application fee: '$id'",
           'retrieved application fee';
     }
     eval {
@@ -661,7 +661,7 @@ subtest 'Application Fees' => sub {
         is $fee->id, $id, 'refunded application fee';
     };
     if ( my $e = $@ ) {               # at least the path worked
-        is $e->message, "No such application fee: $id",
+        is $e->message, "No such application fee: '$id'",
           'refunded application fee';
     }
 };
@@ -687,7 +687,7 @@ subtest Balance => sub {
         ok $balance, 'retrieved a balance transaction';
     };
     if ( my $e = $@ ) {
-        is $e->message, "No such balance transaction: $charge",
+        is $e->message, "No such balance transaction: '$charge'",
           'retrieved a balance transaction';
     }
 };
