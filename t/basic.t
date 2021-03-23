@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use autodie;
 use Test::Exception;
-use Test::More tests => 20;
+use Test::More tests => 18;
 use Net::Stripe::Simple qw(:all);
 use DateTime;
 
@@ -639,100 +639,6 @@ subtest Tokens => sub {
     is $token->id, $id, 'retrieved a token';
 };
 
-my $recipient;
-subtest Recipients => sub {
-    plan tests => 8;
-    $recipient = $stripe->recipients(
-        create => {
-            name => 'I Am An Example',
-            type => 'individual',
-        }
-    );
-    ok $recipient, 'created a recipient';
-    my $id = $recipient->id;
-    throws_ok { $stripe->recipients('retrieve') } qr/No .*\bid provided/,
-      'retrieve requires id';
-    $recipient = $stripe->recipients( retrieve => $id );
-    is $recipient->id, $id, 'retrieved recipient';
-    my $recipients = $stripe->recipients('list');
-    ok scalar @{ $recipients->data }, 'listed recipients';
-    throws_ok {
-        $stripe->recipients(
-            update => {
-                metadata => { foo => 'bar' },
-            }
-          )
-    }
-    qr/No .*\bid provided/, 'update requires id';
-    $recipient = $stripe->recipients(
-        update => {
-            id       => $recipient,
-            metadata => { foo => 'bar' },
-        }
-    );
-    is $recipient->metadata->foo, 'bar', 'updated recipient';
-    throws_ok { $stripe->recipients('delete') } qr/No .*\bid provided/,
-      'delete requires id';
-    $recipient = $stripe->recipients( delete => $id );
-    ok $recipient->deleted, 'deleted recipient';
-    $recipient = $stripe->recipients(
-        create => {
-            name         => 'I Am An Example',
-            type         => 'individual',
-            bank_account => $token,
-        }
-    );
-};
-
-subtest Transfers => sub {
-    plan tests => 8;
-    my $transfer = $stripe->transfers(
-        create => {
-            amount    => 1,
-            currency  => 'usd',
-            recipient => $recipient,
-        }
-    );
-    ok $transfer, 'created a transfer';
-    my $id = $transfer->id;
-    throws_ok { $stripe->transfers('retrieve') } qr/No .*\bid provided/,
-      'retrieve requires id';
-    $transfer = $stripe->transfers( retrieve => $id );
-    is $transfer->id, $id, 'retrieved a transfer';
-    my $transfers = $stripe->transfers(
-        list => {
-            created => { gt => $time }
-        }
-    );
-    ok( ( grep { $_->id eq $id } @{ $transfers->data } ), 'listed transfers' );
-    throws_ok {
-        $stripe->transfers(
-            update => {
-                metadata => { foo => 'bar' }
-            }
-          )
-    }
-    qr/No .*\bid provided/, 'update requires id';
-    $transfer = $stripe->transfers(
-        update => {
-            id       => $transfer,
-            metadata => { foo => 'bar' }
-        }
-    );
-    is $transfer->metadata->foo, 'bar', 'updated a transfer';
-    eval {
-        throws_ok { $stripe->transfers('cancel') } qr/No .*\bid provided/,
-          'cancel requires id';
-        $transfer = $stripe->transfers( cancel => $transfer );
-        ok $transfer->canceled, 'canceled a transfer';
-    };
-    if ( my $e = $@ ) {    # at least the path worked
-        ok $e->message =~
-          /Transfers to non-Stripe accounts can currently only be reversed while they are pending/,
-          'canceled a transfer';
-    }
-};
-
 subtest 'Application Fees' => sub {
     plan tests => 5;
     my $fees = $stripe->application_fees('list');
@@ -824,5 +730,4 @@ END {
     };
     eval { $stripe->customers( delete => $customer ) if $customer };
     eval { $stripe->coupons( delete => $coupon ) if $coupon };
-    eval { $stripe->recipients( delete => $recipient ) if $recipient };
 }

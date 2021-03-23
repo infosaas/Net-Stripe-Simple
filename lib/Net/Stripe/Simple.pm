@@ -462,43 +462,6 @@ sub _close_dispute {
 }
 
 
-sub transfers {
-    my $self = shift;
-    state $actions =
-      { map { $_ => undef } qw(create retrieve update cancel list) };
-    my ( $args, $method ) = $self->_validate( 'transfer', $actions, @_ );
-    $args->{_base} = 'transfers';
-    return $self->$method($args);
-}
-sub _create_transfer   { goto &_create }
-sub _retrieve_transfer { goto &_retrieve }
-sub _update_transfer   { goto &_update }
-
-sub _cancel_transfer {
-    my ( $self, $args ) = @_;
-    my ( $base, $id )   = @$args{qw(_base id)};
-    _invalid('No id provided.') unless defined $id;
-    my $path = $base . '/' . uri_escape($id) . '/cancel';
-    return $self->_post($path);
-}
-sub _list_transfer { goto &_list }
-
-
-sub recipients {
-    my $self = shift;
-    state $actions =
-      { map { $_ => undef } qw(create retrieve update delete list) };
-    my ( $args, $method ) = $self->_validate( 'recipient', $actions, @_ );
-    $args->{_base} = 'recipients';
-    return $self->$method($args);
-}
-sub _create_recipient   { goto &_create }
-sub _retrieve_recipient { goto &_retrieve }
-sub _update_recipient   { goto &_update }
-sub _delete_recipient   { goto &_del }
-sub _list_recipient     { goto &_list }
-
-
 sub application_fees {
     my $self = shift;
     state $actions = { map { $_ => undef } qw(retrieve refund list) };
