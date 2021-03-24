@@ -46,7 +46,13 @@ my %WriteMakefileArgs = (
   "VERSION" => "0.005",
   "test" => {
     "TESTS" => "t/*.t"
-  }
+  },
+  META_MERGE => {
+    resources => {
+      repository => 'https://github.com/infosaas/net-stripe-simple/',
+      bugtracker => 'https://rt.cpan.org/Dist/Display.html?Name=Net-Stripe-Simple',
+    },
+  },
 );
 
 
