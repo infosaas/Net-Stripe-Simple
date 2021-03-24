@@ -1303,22 +1303,13 @@ B<Available Actions>
 
 =back
 
-=head2 payment intents
+=head2 payment_intents
 
 See L<https://stripe.com/docs/api/payment_intents>.
 
 B<Available Actions>
 
 =over 4
-
-=item update
-
-    $stripe->disputes(
-        update => {
-            id       => $charge,
-            metadata => { foo => 'bar' }
-        }
-    );
 
 =item create
 
@@ -1335,11 +1326,12 @@ B<Available Actions>
 
     $payment_intent = $stripe->payment_intents( retrieve => $id );
 
-=item list
+=item update
 
     $stripe->payment_intents(
-        list => {
-            customer => $customer
+        update => {
+            id       => $payment_intent,
+            metadata => { foo => 'bar' }
         }
     );
 
@@ -1362,6 +1354,14 @@ B<Available Actions>
 =item cancel
 
     $payment_intent = $stripe->payment_intents( cancel => $payment_intent );
+
+=item list
+
+    $stripe->payment_intents(
+        list => {
+            customer => $customer
+        }
+    );
 
 =back
 
