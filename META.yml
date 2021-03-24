@@ -44,5 +44,5 @@ requires:
   warnings: '0'
 resources:
   repository: git://github.com/infosaas/Net-Stripe-Simple.git
-version: '0.004'
+version: '0.005'
 x_serialization_backend: 'YAML::Tiny version 1.69'

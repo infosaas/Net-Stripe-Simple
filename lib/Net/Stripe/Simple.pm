@@ -1,5 +1,5 @@
 package Net::Stripe::Simple;
-$Net::Stripe::Simple::VERSION = '0.004';
+$Net::Stripe::Simple::VERSION = '0.005';
 # ABSTRACT: simple, non-Moose interface to the Stripe API
 
 use v5.10;
@@ -17,8 +17,6 @@ use Devel::StackTrace;
 
 use Net::Stripe::Simple::Data;
 use Net::Stripe::Simple::Error;
-
-our $VERSION = '0.05';
 
 our @EXPORT_OK = qw(true false null data_object);
 our %EXPORT_TAGS = ( const => [qw(true false null)], all => \@EXPORT_OK );
