@@ -10,7 +10,7 @@ use Exporter qw(import);
 use LWP::UserAgent;
 use HTTP::Request::Common qw(GET POST DELETE);
 use MIME::Base64 qw(encode_base64);
-use URI::Escape qw(uri_escape);
+use URI::Escape qw(uri_escape uri_escape_utf8);
 use Scalar::Util qw(reftype blessed);
 use JSON ();
 use Devel::StackTrace;
@@ -617,12 +617,12 @@ sub _encode_params {
                 next
                   if ref $sv;  # don't think this PHP convention goes deeper
                 push @components,
-                  $ek . '[' . uri_escape($sk) . ']=' . uri_escape($sv);
+                  $ek . '[' . uri_escape($sk) . ']=' . uri_escape_utf8($sv);
             }
         } elsif ($ref eq 'ARRAY') {
             for my $sv (@$value) {
                 next if ref $sv;    # again, I think we can't go deeper
-                push @components, $ek . '[]=' . uri_escape($sv);
+                push @components, $ek . '[]=' . uri_escape_utf8($sv);
             }
         } else {
             $value =    # JSON boolean stringification magic has been erased
@@ -630,7 +630,7 @@ sub _encode_params {
               ? $value
                   ? 'true'
                   : 'false'
-              : uri_escape($value);
+              : uri_escape_utf8($value);
             push @components, "$ek=$value"
         }
     }
